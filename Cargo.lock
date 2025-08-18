@@ -160,6 +160,8 @@ dependencies = [
  "criterion",
  "float8",
  "half",
+ "rand",
+ "rand_distr",
 ]
 
 [[package]]

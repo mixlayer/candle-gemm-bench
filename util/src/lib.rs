@@ -37,3 +37,46 @@ impl<const Q_PROJ_M: usize, const Q_PROJ_N: usize, const HIDDEN_SZ: usize>
 }
 
 pub const LLAMA_70B_DIMS: ModelDims<1024, 1024, 1024> = ModelDims {};
+
+pub fn tensor_rand<D: WithDType + FloatDType>(shape: Shape, device: &Device) -> Tensor
+where
+    StandardUniform: Distribution<D>,
+{
+    let elems = shape.elem_count();
+    let mut rng = rand::rng();
+    let es = (0..elems).map(|_| rng.random::<D>()).collect::<Vec<_>>();
+    Tensor::from_vec(es, shape, device).unwrap()
+}
+
+pub struct ModelDims2 {
+    q_proj_dims: (usize, usize),
+    kv_proj_dims: (usize, usize),
+    mlp_dims: (usize, usize),
+}
+
+impl ModelDims2 {
+    pub fn bench_problems(&self, batch_sz: usize) -> Vec<((usize, usize), (usize, usize))> {
+        let ps = &[
+            (
+                (self.q_proj_dims.0, self.q_proj_dims.1),
+                (self.q_proj_dims.1, batch_sz),
+            ),
+            (
+                (self.kv_proj_dims.0, self.kv_proj_dims.1),
+                (self.kv_proj_dims.1, batch_sz),
+            ),
+            (
+                (self.mlp_dims.0, self.mlp_dims.1),
+                (self.mlp_dims.1, batch_sz),
+            ),
+        ];
+
+        ps.to_vec()
+    }
+}
+
+pub const LLAMA_DIMS: ModelDims2 = ModelDims2 {
+    q_proj_dims: (8192, 8192),
+    kv_proj_dims: (1024, 8192),
+    mlp_dims: (28672, 8192),
+};

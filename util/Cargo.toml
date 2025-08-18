@@ -1,0 +1,10 @@
+[package]
+name = "candle-gemm-bench-util"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+candle = { workspace = true, features = ["cuda"] }
+half = { workspace = true }
+float8 = { workspace = true }
+rand = { workspace = true }

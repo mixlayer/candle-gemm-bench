@@ -1,0 +1,13 @@
+[package]
+name = "candle-gemm-bench-cutlass"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+candle = { workspace = true, features = ["cuda"] }
+cudarc = { workspace = true }
+float8.workspace = true
+half.workspace = true
+
+[build-dependencies]
+bindgen_cuda = "0.1.5"

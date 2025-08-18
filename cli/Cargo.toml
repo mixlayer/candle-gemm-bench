@@ -1,0 +1,11 @@
+[package]
+name = "candle-gemm-bench-cli"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+candle = { workspace = true, features = ["cuda"] }
+half = { workspace = true }
+float8 = { workspace = true }
+candle-gemm-bench-cutlass = { path = "../cutlass-gemm" }
+candle-gemm-bench-util = { path = "../util" }

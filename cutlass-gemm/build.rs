@@ -4,13 +4,19 @@ fn main() {
     let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
 
     println!("cargo:rerun-if-changed=kernels/bf16_fp8_cutlass_sm90.cu");
+    println!("cargo:rerun-if-changed=kernels/fp8_fp8_cutlass_sm90.cu");
     println!("cargo:rerun-if-changed=build.rs");
 
     let builder = bindgen_cuda::Builder::default()
         .kernel_paths(vec![format!(
             "{}/kernels/bf16_fp8_cutlass_sm90.cu",
             manifest_dir
-        )])
+        ),
+        format!(
+            "{}/kernels/fp8_fp8_cutlass_sm90.cu",
+            manifest_dir
+        ),
+    ])
         .arg("-arch=sm_90a")
         // .arg("-gencode=arch=compute_120,code=sm_120")
         // .arg("-gencode=arch=compute_120,code=compute_120")

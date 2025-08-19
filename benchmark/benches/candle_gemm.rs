@@ -1,9 +1,8 @@
-use candle::{Device, FloatDType, Shape, Tensor, WithDType};
-use candle_gemm_bench_util::{LLAMA_70B_DIMS, LLAMA_DIMS, tensor_rand};
+use candle::{DType, Device, Shape};
+use candle_gemm_bench_util::{LLAMA_DIMS, MatMul, tensor_rand};
 use criterion::{Criterion, criterion_group, criterion_main};
 use float8::F8E4M3;
-use half::{bf16, f16};
-use rand_distr::{Distribution, StandardUniform};
+use half::bf16;
 
 fn cuda_device() -> Device {
     candle::Device::new_cuda(0).expect("error creating cuda device")
@@ -14,21 +13,32 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     let dummy_scale: f32 = 1.232;
 
-    for ((am, an), (bm, bn)) in LLAMA_DIMS.bench_problems(1) {
-        let mut group = c.benchmark_group(format!("{}x{}@{}x{}", am, an, bm, bn));
+    for matmul in LLAMA_DIMS.bench_problems(1) {
+        let MatMul {
+            weight_dims,
+            input_dims,
+        } = matmul;
 
-        let m_a = tensor_rand::<bf16>(Shape::from((am, an)), &device);
-        let m_b = tensor_rand::<bf16>(Shape::from((bm, bn)), &device);
+        // let (am, an) = weight_dims;
+        // let (bn, bm) = input_dims;
+
+        let W = tensor_rand::<f32>(Shape::from(weight_dims), &device);
+        let X = tensor_rand::<f32>(Shape::from(input_dims), &device);
+
+        let mut group = c.benchmark_group(format!("{:?}@{:?}", weight_dims, input_dims));
+
+        let weight = W.to_dtype(DType::BF16).unwrap();
+        let x = X.to_dtype(DType::BF16).unwrap().t().unwrap();
 
         group.bench_function("candle_builtin_cublas_gemm_bf16", |b| {
             b.iter(|| {
-                let _y = m_a.matmul(&m_b).unwrap();
+                let _y = weight.matmul(&x).unwrap();
                 device.synchronize().unwrap();
             });
         });
 
-        let m_a = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
-        let m_b_t = tensor_rand::<bf16>(Shape::from((bn, bm)), &device);
+        let x = X.to_dtype(DType::BF16).unwrap();
+        let weight = W.to_dtype(DType::F8E4M3).unwrap().t().unwrap();
 
         group.bench_function("cutlass_gemm_bf16_fp8", |b| {
             let op = candle_gemm_bench_cutlass::Bf16Fp8CutlassMatmul {
@@ -38,13 +48,13 @@ fn criterion_benchmark(c: &mut Criterion) {
             };
 
             b.iter(|| {
-                let _y = m_b_t.apply_op2_no_bwd(&m_a, &op).unwrap();
+                let _y = x.apply_op2_no_bwd(&weight, &op).unwrap();
                 device.synchronize().unwrap();
             });
         });
 
-        let m_a = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
-        let m_b_t = tensor_rand::<F8E4M3>(Shape::from((bn, bm)), &device);
+        let weight = W.to_dtype(DType::F8E4M3).unwrap();
+        let x = X.to_dtype(DType::F8E4M3).unwrap();
 
         group.bench_function("cutlass_gemm_fp8_fp8", |b| {
             let op = candle_gemm_bench_cutlass::Fp8Fp8CutlassMatmul {
@@ -55,18 +65,18 @@ fn criterion_benchmark(c: &mut Criterion) {
             };
 
             b.iter(|| {
-                let _y = m_b_t.apply_op2_no_bwd(&m_a, &op).unwrap();
+                let _y = x.apply_op2_no_bwd(&weight, &op).unwrap();
                 device.synchronize().unwrap();
             });
         });
 
-        let m_weights = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
-        let m_input = tensor_rand::<bf16>(Shape::from((bn, bm)), &device);
+        let weight = W.to_dtype(DType::F8E4M3).unwrap();
+        let x = X.to_dtype(DType::BF16).unwrap();
 
         group.bench_function("cudnn_gemm_bf16_fp8", |b| {
             let op = candle_gemm_bench_cudnn::Bf16Fp8CudnnMatmul::new(&device, dummy_scale);
             b.iter(|| {
-                let _y = m_input.apply_op2_no_bwd(&m_weights, &op).unwrap();
+                let _y = x.apply_op2_no_bwd(&weight, &op).unwrap();
                 device.synchronize().unwrap();
             });
         });

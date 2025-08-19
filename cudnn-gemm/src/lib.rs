@@ -1,7 +1,7 @@
 use candle::backend::BackendStorage;
 use candle::{DType, Layout, Shape};
 use candle::{Device, cuda::DeviceId};
-use cudarc::cudnn::{result, safe, sys};
+use cudarc::cudnn::{result, sys};
 use cudarc::driver::DevicePtr;
 use std::{cell::RefCell, collections::HashMap, sync::Arc};
 
@@ -137,11 +137,15 @@ impl Bf16Fp8CudnnMatmul {
         let a_ptr = a_ptr as *const u16;
         let b_ptr = b_ptr as *const u8;
 
-        let (m, k) = a_l.shape().dims2()?;
-        let (k_b, n) = b_l.shape().dims2()?;
+        let d_a @ (m, k) = a_l.shape().dims2()?;
+        let d_b @ (k_b, n) = b_l.shape().dims2()?;
 
         if k_b != k {
-            candle::bail!("This layer only supports NN, row major layout");
+            candle::bail!(
+                "This layer only supports NN, row major layout, input dims: {:?}, {:?}",
+                d_a,
+                d_b
+            );
         }
 
         let out_shape = Shape::from((m, n));

@@ -134,11 +134,13 @@ impl Bf16Fp8CutlassMatmul {
         let a_ptr = a_ptr as *const u16;
         let b_ptr = b_ptr as *const u8;
 
-        let (m, k) = a_l.shape().dims2()?;
-        let (n, b_1) = b_l.shape().dims2()?;
+        let a_dims @ (m, k) = a_l.shape().dims2()?;
+        let b_dims @ (n, b_1) = b_l.shape().dims2()?;
 
         if b_1 != k {
-            candle::bail!("This layer only supports TN layout");
+            candle::bail!(
+                "This layer only supports TN layout, got (A = {a_dims:?}, B = {b_dims:?})"
+            );
         }
 
         let out_shape = Shape::from((n, m));

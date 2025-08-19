@@ -9,3 +9,5 @@ half = { workspace = true }
 float8 = { workspace = true }
 candle-gemm-bench-cutlass = { path = "../cutlass-gemm" }
 candle-gemm-bench-util = { path = "../util" }
+candle-gemm-bench-cudnn = { path = "../cudnn-gemm" }
+anyhow.workspace = true

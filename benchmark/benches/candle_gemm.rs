@@ -17,48 +17,48 @@ fn criterion_benchmark(c: &mut Criterion) {
     for ((am, an), (bm, bn)) in LLAMA_DIMS.bench_problems(1) {
         let mut group = c.benchmark_group(format!("{}x{}@{}x{}", am, an, bm, bn));
 
-        // let m_a = tensor_rand::<bf16>(Shape::from((am, an)), &device);
-        // let m_b = tensor_rand::<bf16>(Shape::from((bm, bn)), &device);
+        let m_a = tensor_rand::<bf16>(Shape::from((am, an)), &device);
+        let m_b = tensor_rand::<bf16>(Shape::from((bm, bn)), &device);
 
-        // group.bench_function("candle_builtin_cublas_gemm_bf16", |b| {
-        //     b.iter(|| {
-        //         let _y = m_a.matmul(&m_b).unwrap();
-        //         device.synchronize().unwrap();
-        //     });
-        // });
+        group.bench_function("candle_builtin_cublas_gemm_bf16", |b| {
+            b.iter(|| {
+                let _y = m_a.matmul(&m_b).unwrap();
+                device.synchronize().unwrap();
+            });
+        });
 
-        // let m_a = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
-        // let m_b_t = tensor_rand::<bf16>(Shape::from((bn, bm)), &device);
+        let m_a = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
+        let m_b_t = tensor_rand::<bf16>(Shape::from((bn, bm)), &device);
 
-        // group.bench_function("cutlass_gemm_bf16_fp8", |b| {
-        //     let op = candle_gemm_bench_cutlass::Bf16Fp8CutlassMatmul {
-        //         alpha: 1.0,
-        //         beta: 0.0,
-        //         fp8_b_scale: dummy_scale,
-        //     };
+        group.bench_function("cutlass_gemm_bf16_fp8", |b| {
+            let op = candle_gemm_bench_cutlass::Bf16Fp8CutlassMatmul {
+                alpha: 1.0,
+                beta: 0.0,
+                fp8_b_scale: dummy_scale,
+            };
 
-        //     b.iter(|| {
-        //         let _y = m_b_t.apply_op2_no_bwd(&m_a, &op).unwrap();
-        //         device.synchronize().unwrap();
-        //     });
-        // });
+            b.iter(|| {
+                let _y = m_b_t.apply_op2_no_bwd(&m_a, &op).unwrap();
+                device.synchronize().unwrap();
+            });
+        });
 
-        // let m_a = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
-        // let m_b_t = tensor_rand::<F8E4M3>(Shape::from((bn, bm)), &device);
+        let m_a = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
+        let m_b_t = tensor_rand::<F8E4M3>(Shape::from((bn, bm)), &device);
 
-        // group.bench_function("cutlass_gemm_fp8_fp8", |b| {
-        //     let op = candle_gemm_bench_cutlass::Fp8Fp8CutlassMatmul {
-        //         alpha: 1.0,
-        //         beta: 0.0,
-        //         fp8_a_scale: dummy_scale,
-        //         fp8_b_scale: dummy_scale,
-        //     };
+        group.bench_function("cutlass_gemm_fp8_fp8", |b| {
+            let op = candle_gemm_bench_cutlass::Fp8Fp8CutlassMatmul {
+                alpha: 1.0,
+                beta: 0.0,
+                fp8_a_scale: dummy_scale,
+                fp8_b_scale: dummy_scale,
+            };
 
-        //     b.iter(|| {
-        //         let _y = m_b_t.apply_op2_no_bwd(&m_a, &op).unwrap();
-        //         device.synchronize().unwrap();
-        //     });
-        // });
+            b.iter(|| {
+                let _y = m_b_t.apply_op2_no_bwd(&m_a, &op).unwrap();
+                device.synchronize().unwrap();
+            });
+        });
 
         let m_weights = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
         let m_input = tensor_rand::<bf16>(Shape::from((bn, bm)), &device);

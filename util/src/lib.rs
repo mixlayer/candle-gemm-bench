@@ -61,14 +61,14 @@ impl ModelDims2 {
                 (self.q_proj_dims.0, self.q_proj_dims.1),
                 (self.q_proj_dims.1, batch_sz),
             ),
-            (
-                (self.kv_proj_dims.0, self.kv_proj_dims.1),
-                (self.kv_proj_dims.1, batch_sz),
-            ),
-            (
-                (self.mlp_dims.0, self.mlp_dims.1),
-                (self.mlp_dims.1, batch_sz),
-            ),
+            // (
+            //     (self.kv_proj_dims.0, self.kv_proj_dims.1),
+            //     (self.kv_proj_dims.1, batch_sz),
+            // ),
+            // (
+            //     (self.mlp_dims.0, self.mlp_dims.1),
+            //     (self.mlp_dims.1, batch_sz),
+            // ),
         ];
 
         ps.to_vec()

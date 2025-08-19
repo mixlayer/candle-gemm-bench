@@ -60,13 +60,13 @@ fn criterion_benchmark(c: &mut Criterion) {
         //     });
         // });
 
-        let m_a = tensor_rand::<bf16>(Shape::from((am, an)), &device);
-        let m_b = tensor_rand::<F8E4M3>(Shape::from((bm, bn)), &device);
+        let m_weights = tensor_rand::<F8E4M3>(Shape::from((am, an)), &device);
+        let m_input = tensor_rand::<bf16>(Shape::from((bn, bm)), &device);
 
         group.bench_function("cudnn_gemm_bf16_fp8", |b| {
             let op = candle_gemm_bench_cudnn::Bf16Fp8CudnnMatmul::new(&device, dummy_scale);
             b.iter(|| {
-                let _y = m_a.apply_op2_no_bwd(&m_b, &op).unwrap();
+                let _y = m_input.apply_op2_no_bwd(&m_weights, &op).unwrap();
                 device.synchronize().unwrap();
             });
         });

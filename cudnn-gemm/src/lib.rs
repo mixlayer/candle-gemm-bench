@@ -1,27 +1,36 @@
 use candle::backend::BackendStorage;
 use candle::{DType, Layout, Shape};
 use candle::{Device, cuda::DeviceId};
-use cudarc::cudnn::safe::Cudnn;
+use cudarc::cudnn::{result, safe, sys};
 use cudarc::driver::DevicePtr;
 use std::{cell::RefCell, collections::HashMap, sync::Arc};
 
+// let handle = result::create_handle()?;
+//         unsafe { result::set_stream(handle, stream.cu_stream as *mut _) }?;
 thread_local! {
-    static CUDNN: RefCell<HashMap<DeviceId, Arc<Cudnn>>> = HashMap::new().into();
+    // static CUDNN: RefCell<HashMap<DeviceId, Arc<Cudnn>>> = HashMap::new().into();
+    static CUDNN: RefCell<HashMap<DeviceId, Arc<CudnnHandle>>> = HashMap::new().into();
 }
 
-pub(crate) fn cudnn(device: Device) -> Arc<Cudnn> {
+pub struct CudnnHandle {
+    handle: sys::cudnnHandle_t,
+}
+
+pub(crate) fn cudnn(device: &Device) -> Arc<CudnnHandle> {
     let cuda_device = device.as_cuda_device().unwrap();
     let device_id = cuda_device.id();
     let cudnn = CUDNN.with(|cudnn| {
         if let Some(cudnn) = cudnn.borrow().get(&device_id) {
             return cudnn.clone();
         }
-        let c = Cudnn::new(cuda_device.cuda_stream());
-        if let Ok(c) = &c {
-            cudnn.borrow_mut().insert(device_id, c.clone());
-        }
 
-        c.expect("error creating cudnn")
+        let c = Arc::new(CudnnHandle {
+            handle: result::create_handle().expect("error creating cudnn handle"),
+        });
+
+        cudnn.borrow_mut().insert(device_id, c.clone());
+
+        c
     });
 
     cudnn
@@ -33,6 +42,7 @@ use std::os::raw::{c_int, c_longlong};
 unsafe extern "C" {
     /// Returns 0 on success.
     pub fn bf16_fp8_matmul_cudnn(
+        handle: sys::cudnnHandle_t,
         stream: *mut c_void,
         m: c_longlong,
         n: c_longlong,
@@ -57,6 +67,7 @@ pub enum Fp8Kind {
 /// Candle-friendly wrapper.
 /// Safety: pointers must be device pointers on the same CUDA device & stream.
 pub fn cudnn_gemm_bf16_fp8(
+    cudnn: sys::cudnnHandle_t,
     stream: *mut c_void,
     m: i64,
     n: i64,
@@ -71,6 +82,7 @@ pub fn cudnn_gemm_bf16_fp8(
 ) -> Result<(), i32> {
     unsafe {
         let code = bf16_fp8_matmul_cudnn(
+            cudnn,
             stream,
             m,
             n,
@@ -137,7 +149,10 @@ impl Bf16Fp8CudnnMatmul {
 
         let (d_dev, _d_guard) = out.device_ptr(&stream);
 
+        let cudnn = cudnn(&self.device);
+
         cudnn_gemm_bf16_fp8(
+            cudnn.handle,
             stream.cu_stream() as *mut c_void,
             m as i64,
             n as i64,

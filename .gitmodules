@@ -1,3 +1,6 @@
 [submodule "cutlass-gemm/cutlass"]
 	path = cutlass-gemm/cutlass
 	url = https://github.com/NVIDIA/cutlass.git
+[submodule "cudnn-gemm/cudnn-frontend"]
+	path = cudnn-gemm/cudnn-frontend
+	url = https://github.com/NVIDIA/cudnn-frontend

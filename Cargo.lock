@@ -130,6 +130,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "candle-gemm-bench-cudnn"
+version = "0.1.0"
+dependencies = [
+ "bindgen_cuda",
+ "candle-core",
+ "cudarc 0.17.2",
+ "float8",
+ "half",
+]
+
+[[package]]
 name = "candle-gemm-bench-cutlass"
 version = "0.1.0"
 dependencies = [
@@ -155,6 +166,7 @@ name = "candle-gemm-benchmark"
 version = "0.1.0"
 dependencies = [
  "candle-core",
+ "candle-gemm-bench-cudnn",
  "candle-gemm-bench-cutlass",
  "candle-gemm-bench-util",
  "criterion",

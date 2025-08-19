@@ -13,13 +13,16 @@ Benchmarking candle_builtin_cublas_gemm_bf16/8192x8192@8192x1: Collecting 100 sa
                         time:   [58.572 µs 58.625 µs 58.692 µs]
                         change: [+1.3768% +1.4752% +1.5720%] (p = 0.00 < 0.05)
                         Performance has regressed.
-Found 2 outliers among 100 measurements (2.00%)                                                           2 (2.00%) high mild                                                                                   Benchmarking candle_builtin_cublas_gemm_bf16/1024x8192@8192x1: Collecting 100 samples in estimated 5.061candle_builtin_cublas_gemm_bf16/1024x8192@8192x1
+Found 2 outliers among 100 measurements (2.00%)                                                           2 (2.00%) high mild                                                                                   
+
+Benchmarking candle_builtin_cublas_gemm_bf16/1024x8192@8192x1: Collecting 100 samples in estimated 5.061candle_builtin_cublas_gemm_bf16/1024x8192@8192x1
                         time:   [22.167 µs 22.186 µs 22.209 µs]
                         change: [+0.9880% +1.1829% +1.3903%] (p = 0.00 < 0.05)
                         Change within noise threshold.
 Found 12 outliers among 100 measurements (12.00%)
   5 (5.00%) low mild
   2 (2.00%) high mild                                                                                     5 (5.00%) high severe
+  
 Benchmarking candle_builtin_cublas_gemm_bf16/28672x8192@8192x1: Collecting 100 samples in estimated 5.05candle_builtin_cublas_gemm_bf16/28672x8192@8192x1                                                                               time:   [166.70 µs 166.75 µs 166.80 µs]
                         change: [+0.0231% +0.0605% +0.1057%] (p = 0.00 < 0.05)
                         Change within noise threshold.                                                  Found 18 outliers among 100 measurements (18.00%)
@@ -28,13 +31,16 @@ Benchmarking candle_builtin_cublas_gemm_bf16/28672x8192@8192x1: Collecting 100 s
   8 (8.00%) high severe
 
 Benchmarking cutlass_gemm_bf16_fp8/8192x8192@8192x1: Collecting 100 samples in estimated 5.1662 s (56k icutlass_gemm_bf16_fp8/8192x8192@8192x1
-                        time:   [91.810 µs 91.870 µs 91.934 µs]                                                                 change: [+0.1684% +0.2507% +0.3252%] (p = 0.00 < 0.05)
+                        time:   [91.810 µs 91.870 µs 91.934 µs]                                                                 
+                        change: [+0.1684% +0.2507% +0.3252%] (p = 0.00 < 0.05)
                         Change within noise threshold.                                                  Found 9 outliers among 100 measurements (9.00%)
   6 (6.00%) high mild
   3 (3.00%) high severe                                                                                 Benchmarking cutlass_gemm_bf16_fp8/1024x8192@8192x1: Collecting 100 samples in estimated 5.4244 s (61k icutlass_gemm_bf16_fp8/1024x8192@8192x1
-                        time:   [89.383 µs 89.425 µs 89.472 µs]                                                                 change: [−0.2705% −0.1867% −0.1111%] (p = 0.00 < 0.05)
+                        time:   [89.383 µs 89.425 µs 89.472 µs]                                                                 
+                        change: [−0.2705% −0.1867% −0.1111%] (p = 0.00 < 0.05)
                         Change within noise threshold.
-Found 7 outliers among 100 measurements (7.00%)                                                           3 (3.00%) high mild
+Found 7 outliers among 100 measurements (7.00%)                                                           
+3 (3.00%) high mild
   4 (4.00%) high severe
 Benchmarking cutlass_gemm_bf16_fp8/28672x8192@8192x1: Collecting 100 samples in estimated 5.4159 s (30k cutlass_gemm_bf16_fp8/28672x8192@8192x1
                         time:   [178.69 µs 178.78 µs 178.88 µs]
@@ -58,6 +64,7 @@ Found 6 outliers among 100 measurements (6.00%)
 Benchmarking cutlass_gemm_fp8_fp8/28672x8192@8192x1: Collecting 100 samples in estimated 5.1574 s (40k icutlass_gemm_fp8_fp8/28672x8192@8192x1
                         time:   [127.72 µs 127.78 µs 127.84 µs]
                         change: [−0.0136% +0.0628% +0.1436%] (p = 0.11 > 0.05)
-                        No change in performance detected.                                              Found 8 outliers among 100 measurements (8.00%)                                                           1 (1.00%) low mild                                                                                      4 (4.00%) high mild
+                        No change in performance detected.                                              Found 8 outliers among 100 measurements (8.00%)                                                           
+                        1 (1.00%) low mild                                                                                      4 (4.00%) high mild
   3 (3.00%) high severe
 ```

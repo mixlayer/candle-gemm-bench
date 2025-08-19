@@ -1,0 +1,77 @@
+
+running 1 test
+test tests::it_works ... ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+candle_builtin_cublas_gemm_bf16/8192x8192@8192x1
+                        time:   [58.840 µs 58.879 µs 58.939 µs]
+                        change: [+1.8820% +1.9753% +2.0586%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 23 outliers among 100 measurements (23.00%)
+  4 (4.00%) low severe
+  8 (8.00%) low mild
+  4 (4.00%) high mild
+  7 (7.00%) high severe
+candle_builtin_cublas_gemm_bf16/1024x8192@8192x1
+                        time:   [22.284 µs 22.301 µs 22.321 µs]
+                        change: [+2.5507% +2.6592% +2.7599%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 8 outliers among 100 measurements (8.00%)
+  3 (3.00%) high mild
+  5 (5.00%) high severe
+candle_builtin_cublas_gemm_bf16/28672x8192@8192x1
+                        time:   [166.80 µs 166.83 µs 166.87 µs]
+                        change: [+0.1322% +0.1947% +0.2711%] (p = 0.00 < 0.05)
+                        Change within noise threshold.
+Found 6 outliers among 100 measurements (6.00%)
+  2 (2.00%) high mild
+  4 (4.00%) high severe
+
+cutlass_gemm_bf16_fp8/8192x8192@8192x1
+                        time:   [92.386 µs 92.462 µs 92.561 µs]
+                        change: [+1.3378% +1.5709% +1.8801%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 17 outliers among 100 measurements (17.00%)
+  1 (1.00%) low mild
+  8 (8.00%) high mild
+  8 (8.00%) high severe
+cutlass_gemm_bf16_fp8/1024x8192@8192x1
+                        time:   [90.253 µs 90.330 µs 90.413 µs]
+                        change: [+1.8566% +1.9838% +2.1044%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 5 outliers among 100 measurements (5.00%)
+  3 (3.00%) high mild
+  2 (2.00%) high severe
+cutlass_gemm_bf16_fp8/28672x8192@8192x1
+                        time:   [179.16 µs 179.21 µs 179.26 µs]
+                        change: [+0.6025% +0.6685% +0.7272%] (p = 0.00 < 0.05)
+                        Change within noise threshold.
+Found 9 outliers among 100 measurements (9.00%)
+  3 (3.00%) low mild
+  3 (3.00%) high mild
+  3 (3.00%) high severe
+
+cutlass_gemm_fp8_fp8/8192x8192@8192x1
+                        time:   [61.649 µs 61.694 µs 61.746 µs]
+                        change: [+1.5789% +1.6729% +1.7649%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 9 outliers among 100 measurements (9.00%)
+  1 (1.00%) low mild
+  2 (2.00%) high mild
+  6 (6.00%) high severe
+cutlass_gemm_fp8_fp8/1024x8192@8192x1
+                        time:   [49.777 µs 49.839 µs 49.911 µs]
+                        change: [+1.8745% +2.0527% +2.2362%] (p = 0.00 < 0.05)
+                        Performance has regressed.
+Found 9 outliers among 100 measurements (9.00%)
+  3 (3.00%) high mild
+  6 (6.00%) high severe
+cutlass_gemm_fp8_fp8/28672x8192@8192x1
+                        time:   [127.74 µs 127.83 µs 127.95 µs]
+                        change: [+0.8038% +0.8885% +0.9670%] (p = 0.00 < 0.05)
+                        Change within noise threshold.
+Found 8 outliers among 100 measurements (8.00%)
+  5 (5.00%) high mild
+  3 (3.00%) high severe
+
